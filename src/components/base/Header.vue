@@ -12,60 +12,73 @@
         router-link.navbar-link(
           :to="`${link.url}`"
         ) {{ link.title }}
-      //vs-navbar-item(index='0')
-        a(href='#') Home
-      //vs-navbar-item(index='1')
-        a(href='#') News
-      //vs-navbar-item(index='2')
-        a(href='#') Update
-    //md-app-toolbar.md-large.md-dense.md-primary(slot="md-app-toolbar")
-      .md-toolbar-row
-        .md-toolbar-section-start
-          md-button.md-icon-button(@click='menuVisible = !menuVisible')
-            md-icon menu
-          span.md-title My Title
-        .md-toolbar-section-end
-          md-button.md-icon-button
-            md-icon more_vert
-      .md-toolbar-row
-        md-tabs.md-primary(v-for='item in items' :key='item.title' link='')
-          md-tab(:md-label='item.title')
-          //md-tab#tab-home(md-label='Home')
-          //md-tab#tab-pages(md-label='Search')
-          //md-tab#tab-posts(md-label='MyOffers')
-          //md-tab#tab-favorites(md-label='Contacts')
-    //md-app-drawer(:md-active.sync='menuVisible')
-      md-toolbar.md-transparent(md-elevation='0') Navigation
-      md-list(v-for='item in items' :key='item.title' link='')
-        md-list-item
-          md-icon {{ item.icon }}
-          span.md-list-item-text {{ item.title }}
-        //md-list-item
-          md-icon move_to_inbox
-          span.md-list-item-text Home
-        //md-list-item
-          md-icon send
-          span.md-list-item-text Search
-        //md-list-item
-          md-icon delete
-          span.md-list-item-text MyOffers
-        //md-list-item
-          md-icon error
-          span.md-list-item-text Contacts
+      // Статическое формирование пункта меню "Выйти"
+      vs-navbar-item(
+        v-if="checkUser"
+      )
+        span.navbar-link(@click='signOut') SignOut ({{userData.name}})
+          img(:src="userData.photo" style="height: 32px; width: 32px; border-radius: 50%")
 </template>
 <script>
+import firebase from 'firebase'
+import store from '../../store'
 export default {
   name: 'Header',
   data () {
     return {
       menuShow: false,
-      activeItem: 0,
-      linkMenu: [
+      activeItem: 0
+    }
+  },
+  created () {
+    // Обработчик событий "пользователь вошел / вышел"
+    firebase.auth().onAuthStateChanged(function (user) {
+      if (user) {
+        store.dispatch('loggedUser', user)
+      } else {}
+    })
+  },
+  computed: {
+    checkUser () {
+      return store.getters.checkUser
+    },
+    userData () {
+      return store.getters.user
+    },
+    isLoading () {
+      return this.$store.getters.loading
+    },
+    linkMenu () {
+      return (this.checkUser) ? [
         { title: 'Home', url: '/', icon: 'mdi-home' },
         { title: 'Search', url: '/search', icon: 'mdi-book-search-outline' },
         { title: 'My Offers', url: '/my-offers', icon: 'mdi-format-list-bulleted' },
         { title: 'Contacts', url: '/contacts', icon: 'mdi-contact-phone-outline' }
+      ] : [
+        { title: 'Home', url: '/', icon: 'mdi-home' },
+        { title: 'Contacts', url: '/contacts', icon: 'mdi-contact-phone-outline' }
       ]
+    }
+  },
+  // Наблюдение за значением route
+  watch: {
+    $route (to, from) {
+      // Если нет текущего пользователя
+      // и текущий роут не "Home" || "Contacts"
+      if (!this.checkUser && to.name !== 'Home' && to.name !== 'Contacts') {
+        // Переадресуем пользователя на раздел "Home"
+        this.$router.push('/')
+      }
+      // Иначе переадресуем на желаемый раздел сайта
+    }
+  },
+  methods: {
+    signOut () {
+      // Вызываем выход из учетной записи в текущем приложении
+      store.dispatch('logoutUser')
+        .then(() => {
+          this.$router.push('/search')
+        })
     }
   }
 }
