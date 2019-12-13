@@ -14,9 +14,10 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "material-icons": "^0.3.1",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
-    "vuetify": "^2.1.13"
+    "vuesax": "^3.11.2"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
@@ -66,8 +67,6 @@
     "pug": "^2.0.4",
     "pug-loader": "^2.4.0",
     "rimraf": "^2.6.0",
-    "sass": "^1.23.7",
-    "sass-loader": "^8.0.0",
     "selenium-server": "^3.0.1",
     "semver": "^5.3.0",
     "shelljs": "^0.7.6",

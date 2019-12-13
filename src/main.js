@@ -3,12 +3,14 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-// import vuetify from '@/plugins/vuetify'
-import Vuetify from 'vuetify'
-import 'vuetify/dist/vuetify.min.css'
+import Vuesax from 'vuesax'
+
+import 'vuesax/dist/vuesax.css'
+import 'material-icons/iconfont/material-icons.css'
 
 Vue.config.productionTip = false
-Vue.use(Vuetify)
+Vue.use(Vuesax)
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
