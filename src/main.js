@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import store from './store'
 import Vuesax from 'vuesax'
 import firebase from 'firebase/app'
 import 'firebase/auth'
@@ -22,6 +23,7 @@ Vue.prototype.$lastUser = null
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>',
   propData: {
